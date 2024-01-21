@@ -21,7 +21,7 @@ class HomeScreenWidgetProvider : HomeWidgetProvider() {
 
                 val counter = widgetData.getInt("_counter", 0)
 
-                var counterText = "Your counter value is: $counter"
+                var counterText = "$counter"
 
 
                 setTextViewText(R.id.tv_counter, counterText)

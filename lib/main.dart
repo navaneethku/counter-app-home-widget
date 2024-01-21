@@ -10,31 +10,44 @@ void main() {
 // Called when Doing Background Work initiated from Widget
 @pragma('vm:entry-point')
 Future<void> interactiveCallback(Uri? uri) async {
-  int counter;
-  switch (uri?.host) {
-    case 'incrementcounter':
-      counter =
-          await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0) ?? 0;
+  if (uri?.host == 'incrementcounter') {
+    int counter = 0;
+    await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
+        .then((value) {
+      counter = value!;
       counter++;
-      break;
-    case 'decrementcounter':
-      counter =
-          await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0) ?? 0;
-      if (counter > 0) {
-        counter--;
-      }
-      break;
-    case 'resetcounter':
-      counter = 0;
-      break;
-    default:
-      return;
+    });
+    await HomeWidget.saveWidgetData<int>('_counter', counter);
+    await HomeWidget.updateWidget(
+        //this must the class name used in .Kt
+        name: 'HomeScreenWidgetProvider',
+        iOSName: 'HomeScreenWidgetProvider');
   }
-  await HomeWidget.saveWidgetData<int>('_counter', counter);
-  await HomeWidget.updateWidget(
-      //this must the class name used in .Kt
-      name: 'HomeScreenWidgetProvider',
-      iOSName: 'HomeScreenWidgetProvider');
+    if (uri?.host == 'decrementcounter') {
+    int counter = 0;
+    await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
+        .then((value) {
+      counter = value!;
+      counter--;
+    });
+    await HomeWidget.saveWidgetData<int>('_counter', counter);
+    await HomeWidget.updateWidget(
+        //this must the class name used in .Kt
+        name: 'HomeScreenWidgetProvider',
+        iOSName: 'HomeScreenWidgetProvider');
+  }
+      if (uri?.host == 'resetcounter') {
+    int counter = 0;
+    await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
+        .then((value) {
+      counter = value!;
+    });
+    await HomeWidget.saveWidgetData<int>('_counter', counter);
+    await HomeWidget.updateWidget(
+        //this must the class name used in .Kt
+        name: 'HomeScreenWidgetProvider',
+        iOSName: 'HomeScreenWidgetProvider');
+  }
 }
 
 class MyApp extends StatelessWidget {
