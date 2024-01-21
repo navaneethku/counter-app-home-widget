@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:home_widget/home_widget.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  HomeWidget.registerInteractivityCallback(backgroundCallback);
   runApp(const MyApp());
 }
 
-Future<void> backgroundCallBack(Uri? uri) async {
+Future<void> backgroundCallback(Uri? uri) async {
   if (uri?.host == 'updatecounter') {
     int counter = 0;
-    await HomeWidget.getWidgetData('_counter', defaultValue: 0)
-        .then((value) {
-          
-        });
+    await HomeWidget.getWidgetData('_counter', defaultValue: 0).then((value) {
+      counter = value!;
+      counter++;
+    });
+
+    await HomeWidget.saveWidgetData('_counter', counter);
+    await HomeWidget.updateWidget(
+        name: "HomeScreenWidgetProvider", iOSName: "HomeScreenWidgetProvider");
   }
 }
 
@@ -42,10 +49,29 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    HomeWidget.widgetClicked.listen((Uri? uri) => loadData());
+    loadData();
+  }
+
   void _incrementCounter() {
     setState(() {
       _counter++;
     });
+  }
+
+  void loadData() async {
+    await HomeWidget.getWidgetData('_counter', defaultValue: 0)
+        .then((value) => {_counter = value!});
+    setState(() {});
+  }
+
+  Future<void> updateAppWidget() async {
+    await HomeWidget.saveWidgetData('_counter', _counter);
+    await HomeWidget.updateWidget(
+        name: "HomeScreenWidgetProvider", iOSName: "HomeScreenWidgetProvider");
   }
 
   @override
