@@ -29,10 +29,12 @@ class HomeScreenWidgetProvider : HomeWidgetProvider() {
 
                 setTextViewText(R.id.tv_counter, counterText)
 
-                // Pending intent to update counter on button click
-                val backgroundIntent = HomeWidgetBackgroundIntent.getBroadcast(context,
-                        Uri.parse("myAppWidget://updatecounter"))
-                setOnClickPendingIntent(R.id.bt_update, backgroundIntent)
+                val backgroundIntentIncrement = HomeWidgetBackgroundIntent.getBroadcast(context,
+                        Uri.parse("myAppWidget://incrementcounter"))
+                setOnClickPendingIntent(R.id.bt_increment, backgroundIntentIncrement)
+                val backgroundIntentDecrement = HomeWidgetBackgroundIntent.getBroadcast(context,
+                        Uri.parse("myAppWidget://decrementcounter"))
+                setOnClickPendingIntent(R.id.bt_decrement, backgroundIntentDecrement)
             }
             appWidgetManager.updateAppWidget(widgetId, views)
         }

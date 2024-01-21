@@ -10,12 +10,25 @@ void main() {
 // Called when Doing Background Work initiated from Widget
 @pragma('vm:entry-point')
 Future<void> interactiveCallback(Uri? uri) async {
-  if (uri?.host == 'updatecounter') {
+  if (uri?.host == 'incrementcounter') {
     int counter = 0;
     await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
         .then((value) {
       counter = value!;
       counter++;
+    });
+    await HomeWidget.saveWidgetData<int>('_counter', counter);
+    await HomeWidget.updateWidget(
+        //this must the class name used in .Kt
+        name: 'HomeScreenWidgetProvider',
+        iOSName: 'HomeScreenWidgetProvider');
+  }
+    if (uri?.host == 'decrementcounter') {
+    int counter = 0;
+    await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
+        .then((value) {
+      counter = value!;
+      counter--;
     });
     await HomeWidget.saveWidgetData<int>('_counter', counter);
     await HomeWidget.updateWidget(
