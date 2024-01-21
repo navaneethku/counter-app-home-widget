@@ -3,12 +3,13 @@ import 'package:home_widget/home_widget.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  HomeWidget.registerInteractivityCallback(backgroundCallback);
+  HomeWidget.registerInteractivityCallback(interactiveCallback);
   runApp(const MyApp());
 }
 
 // Called when Doing Background Work initiated from Widget
-Future<void> backgroundCallback(Uri? uri) async {
+@pragma('vm:entry-point')
+Future<void> interactiveCallback(Uri? uri) async {
   if (uri?.host == 'updatecounter') {
     int counter = 0;
     await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
