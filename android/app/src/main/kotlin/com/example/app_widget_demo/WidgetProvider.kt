@@ -23,9 +23,6 @@ class HomeScreenWidgetProvider : HomeWidgetProvider() {
 
                 var counterText = "Your counter value is: $counter"
 
-                if (counter == 0) {
-                    counterText = "You have not pressed the counter button"
-                }
 
                 setTextViewText(R.id.tv_counter, counterText)
 
@@ -35,6 +32,9 @@ class HomeScreenWidgetProvider : HomeWidgetProvider() {
                 val backgroundIntentDecrement = HomeWidgetBackgroundIntent.getBroadcast(context,
                         Uri.parse("myAppWidget://decrementcounter"))
                 setOnClickPendingIntent(R.id.bt_decrement, backgroundIntentDecrement)
+                val backgroundIntentReset = HomeWidgetBackgroundIntent.getBroadcast(context,
+                Uri.parse("myAppWidget://resetcounter"))
+                setOnClickPendingIntent(R.id.bt_reset, backgroundIntentReset)
             }
             appWidgetManager.updateAppWidget(widgetId, views)
         }

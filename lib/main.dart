@@ -10,32 +10,31 @@ void main() {
 // Called when Doing Background Work initiated from Widget
 @pragma('vm:entry-point')
 Future<void> interactiveCallback(Uri? uri) async {
-  if (uri?.host == 'incrementcounter') {
-    int counter = 0;
-    await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
-        .then((value) {
-      counter = value!;
+  int counter;
+  switch (uri?.host) {
+    case 'incrementcounter':
+      counter =
+          await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0) ?? 0;
       counter++;
-    });
-    await HomeWidget.saveWidgetData<int>('_counter', counter);
-    await HomeWidget.updateWidget(
-        //this must the class name used in .Kt
-        name: 'HomeScreenWidgetProvider',
-        iOSName: 'HomeScreenWidgetProvider');
+      break;
+    case 'decrementcounter':
+      counter =
+          await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0) ?? 0;
+      if (counter > 0) {
+        counter--;
+      }
+      break;
+    case 'resetcounter':
+      counter = 0;
+      break;
+    default:
+      return;
   }
-    if (uri?.host == 'decrementcounter') {
-    int counter = 0;
-    await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
-        .then((value) {
-      counter = value!;
-      counter--;
-    });
-    await HomeWidget.saveWidgetData<int>('_counter', counter);
-    await HomeWidget.updateWidget(
-        //this must the class name used in .Kt
-        name: 'HomeScreenWidgetProvider',
-        iOSName: 'HomeScreenWidgetProvider');
-  }
+  await HomeWidget.saveWidgetData<int>('_counter', counter);
+  await HomeWidget.updateWidget(
+      //this must the class name used in .Kt
+      name: 'HomeScreenWidgetProvider',
+      iOSName: 'HomeScreenWidgetProvider');
 }
 
 class MyApp extends StatelessWidget {
@@ -92,31 +91,61 @@ class MyHomePageState extends State<MyHomePage> {
     updateAppWidget();
   }
 
+  void _decrementCounter() {
+    setState(() {
+      if (_counter > 0) {
+        _counter--;
+      }
+    });
+    updateAppWidget();
+  }
+
+  void _resetCounter() {
+    setState(() {
+      _counter = 0;
+    });
+    updateAppWidget();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'You have pushed the button this many times:',
+              ),
+              Text(
+                '$_counter',
+                style: Theme.of(context).textTheme.headline4,
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            FloatingActionButton(
+              onPressed: _incrementCounter,
+              tooltip: 'Increment',
+              child: const Icon(Icons.add),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+            FloatingActionButton(
+              onPressed: _resetCounter,
+              tooltip: 'Reset',
+              child: const Icon(Icons.restore),
+            ),
+            FloatingActionButton(
+              onPressed: _decrementCounter,
+              tooltip: 'Decrement',
+              child: const Icon(Icons.remove),
             ),
           ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), 
-    );
+        ));
   }
 }
